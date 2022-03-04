@@ -1,0 +1,30 @@
+{
+  "name": "kaxiluo/php-composer-package-template",
+  "description": "php composer package template",
+  "keywords": [
+    "php"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "linyiyong",
+      "email": "linyiyongcn@163.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.1.3"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "~7.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Kaxiluo\\PhpComposerPackageTemplate\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  }
+}
