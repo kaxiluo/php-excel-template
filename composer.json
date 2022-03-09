@@ -1,8 +1,12 @@
 {
-  "name": "kaxiluo/php-composer-package-template",
-  "description": "php composer package template",
+  "name": "kaxiluo/php-excel-template",
+  "description": "Generating Excel files from templates, provide excel template variable rendering",
   "keywords": [
-    "php"
+    "php",
+    "excel",
+    "template",
+    "template variable render",
+    "phpspreadsheet"
   ],
   "license": "MIT",
   "authors": [
@@ -12,14 +16,15 @@
     }
   ],
   "require": {
-    "php": ">=7.1.3"
+    "php": ">=7.1.3",
+    "phpoffice/phpspreadsheet": "^1.22"
   },
   "require-dev": {
     "phpunit/phpunit": "~7.0"
   },
   "autoload": {
     "psr-4": {
-      "Kaxiluo\\PhpComposerPackageTemplate\\": "src/"
+      "Kaxiluo\\PhpExcelTemplate\\": "src/"
     }
   },
   "autoload-dev": {
