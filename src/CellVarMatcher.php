@@ -71,8 +71,9 @@ class CellVarMatcher
             if (empty($varName)) {
                 continue;
             }
-            $cellVar = $this->getCellVars($varName);
-            if ($cellVar instanceof $varClass) {
+            $tmpVar = $this->getCellVars($varName);
+            if ($tmpVar instanceof $varClass) {
+                $cellVar = $tmpVar;
                 break;
             }
         }

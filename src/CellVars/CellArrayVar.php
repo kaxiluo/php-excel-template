@@ -6,27 +6,15 @@ use Kaxiluo\PhpExcelTemplate\CellSetter\CellArraySetter;
 
 class CellArrayVar extends CellVar
 {
-    const VAR_PATTERN = '/\[([a-zA-Z_\.\d]+)\]/';
-
-    private $direction;
-
-    private $isInsertNew;
+    const VAR_PATTERN = '/\[([a-zA-Z-_\.\d]+)\]/';
 
     public function __construct(array $data, $direction = RenderDirection::DOWN, bool $isInsertNew = true)
     {
         $this->setData($data);
-        $this->direction = $direction;
-        $this->isInsertNew = $isInsertNew;
-    }
+        $this->setRenderDirection($direction);
+        $this->setIsInsertNew($isInsertNew);
 
-    public function getDirection()
-    {
-        return $this->direction;
-    }
-
-    public function getIsInsertNew(): bool
-    {
-        return $this->isInsertNew;
+        $this->setShouldInsertRowsAndCols();
     }
 
     public function getCellSetter(): string

@@ -7,5 +7,5 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 interface CellSetterInterface
 {
-    public static function render(CellVarInterface $cellVar, Worksheet $worksheet);
+    public static function render(CellVarInterface $cellVar, Worksheet $worksheet, &$context);
 }

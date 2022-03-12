@@ -7,7 +7,7 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class CellArray2DSetter implements CellSetterInterface
 {
-    public static function render(CellVarInterface $cellVar, Worksheet $worksheet)
+    public static function render(CellVarInterface $cellVar, Worksheet $worksheet, &$context)
     {
     }
 }
