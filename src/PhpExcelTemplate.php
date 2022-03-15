@@ -13,7 +13,9 @@ class PhpExcelTemplate
         $spreadsheet = IOFactory::load($templateFile);
         $worksheet = $spreadsheet->getActiveSheet();
 
-        static::render($worksheet, $vars);
+        if ($vars) {
+            static::render($worksheet, $vars);
+        }
 
         $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
         $writer->save($outputFile);
@@ -28,25 +30,23 @@ class PhpExcelTemplate
 
         $varMatcher = new CellVarMatcher($vars);
 
-        $context = [
-            'iMaxInsertRows' => 0,// 单行最大新行数
-            'colToMaxInsertCols' => [],// 列 -> 最大插入列数
-            'insertedColIndexes' => [],// 插入的新列索引
-            'perCellInsertedCol' => 0,// 每个单元格渲染后 真正插入的列数
-        ];
+        $context = new ExcelRenderContext();
 
         $row = 1;
         while ($row <= $maxRow) {
             $col = 1;
 
             // 重置该行最大插入行数
-            $context['iMaxInsertRows'] = 0;
+            $context->iMaxInsertRows = 0;
 
             while ($col <= $maxCol) {
-                // var_dump($row . '-' . $col);
-
                 // 跳过新列
-                if (in_array($col, $context['insertedColIndexes'])) {
+                if (in_array($col, $context->insertedColIndexes)) {
+                    $col++;
+                    continue;
+                }
+                // 跳过非插入新行或列的用户已渲染坐标
+                if ($context->hasSkipRowAndCol($row, $col)) {
                     $col++;
                     continue;
                 }
@@ -59,24 +59,23 @@ class PhpExcelTemplate
                     $col++;
                     continue;
                 }
-                //var_dump('hit ' . get_class($cellVar));
                 $cellVar->setOriginCellValue($cellValue);
                 $cellVar->setColumnAndRow([$col, $row]);
 
                 $cellVar->getCellSetter()::render($cellVar, $worksheet, $context);
 
                 // 扩大maxCol
-                if ($context['perCellInsertedCol']) {
-                    $maxCol += $context['perCellInsertedCol'];
+                if ($context->perCellInsertedCol) {
+                    $maxCol += $context->perCellInsertedCol;
                 }
 
                 $col++;
             }
 
             // 扩大maxRow 跳过新行
-            if ($context['iMaxInsertRows']) {
-                $maxRow += $context['iMaxInsertRows'];
-                $row += $context['iMaxInsertRows'];
+            if ($context->iMaxInsertRows) {
+                $maxRow += $context->iMaxInsertRows;
+                $row += $context->iMaxInsertRows;
             }
 
             $row++;

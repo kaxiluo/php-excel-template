@@ -5,7 +5,7 @@ namespace Kaxiluo\PhpExcelTemplate\CellVars;
 abstract class CellVar implements CellVarInterface
 {
     private $data;
-    private $renderDirection;
+    private $renderDirections = [];
     private $isInsertNew;
     private $callback;
     private $originCellValue;
@@ -17,6 +17,9 @@ abstract class CellVar implements CellVarInterface
 
     protected function setData($data)
     {
+        if (is_array($data) && empty($data)) {
+            throw new \UnexpectedValueException('Data cannot be empty when it is an array');
+        }
         $this->data = $data;
     }
 
@@ -25,17 +28,19 @@ abstract class CellVar implements CellVarInterface
         return $this->data;
     }
 
-    protected function setRenderDirection($direction)
+    protected function setRenderDirections(array $directions)
     {
-        if (!$direction instanceof RenderDirection && is_string($direction)) {
-            $direction = new RenderDirection($direction);
-        }
-        $this->renderDirection = $direction;
+        $this->renderDirections = $directions;
     }
 
-    public function getRenderDirection(): RenderDirection
+    public function getRenderDirections(): array
     {
-        return $this->renderDirection;
+        return $this->renderDirections;
+    }
+
+    public function hasRenderDirection($direction): bool
+    {
+        return in_array($direction, $this->renderDirections);
     }
 
     protected function setIsInsertNew(bool $isInsertNew)
@@ -78,27 +83,19 @@ abstract class CellVar implements CellVarInterface
         return $this->columnAndRow;
     }
 
-    public function setShouldInsertRowsAndCols()
+    public function setShouldInsertRows($rows): void
     {
-        $rows = $cols = 0;
-        if ($this->getIsInsertNew()) {
-            if ($this instanceof CellArrayVar) {
-                if ($this->getRenderDirection()->isDirection(RenderDirection::DOWN)) {
-                    $rows = count($this->getData()) - 1;
-                }
-                if ($this->getRenderDirection()->isDirection(RenderDirection::RIGHT)) {
-                    $cols = count($this->getData()) - 1;
-                }
-            }
-            //TODO 二维
-        }
-        $this->shouldInsertCols = $cols;
         $this->shouldInsertRows = $rows;
     }
 
     public function getShouldInsertRows(): int
     {
         return $this->shouldInsertRows;
+    }
+
+    public function setShouldInsertCols($cols): void
+    {
+        $this->shouldInsertCols = $cols;
     }
 
     public function getShouldInsertCols(): int

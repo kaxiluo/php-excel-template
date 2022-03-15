@@ -10,7 +10,9 @@ interface CellVarInterface
 
     public function getIsInsertNew(): bool;
 
-    public function getRenderDirection(): RenderDirection;
+    public function getRenderDirections(): array;
+
+    public function hasRenderDirection($direction): bool;
 
     public function setCallback($callback);
 

@@ -6,28 +6,8 @@ class RenderDirection
 {
     protected static $cache = [];
 
-    private $direction;
-
     const RIGHT = 'right';
     const DOWN = 'down';
-
-    public function __construct(string $direction)
-    {
-        if (!static::isValid($direction)) {
-            throw new \UnexpectedValueException('Unexpected RenderDirection [' . $direction . ']');
-        }
-        $this->direction = $direction;
-    }
-
-    public function getDirection(): string
-    {
-        return $this->direction;
-    }
-
-    public function isDirection($value): bool
-    {
-        return $this->direction === $value;
-    }
 
     public static function isValid($value): bool
     {
@@ -43,10 +23,5 @@ class RenderDirection
         }
 
         return static::$cache[$class];
-    }
-
-    public function __toString()
-    {
-        return $this->direction;
     }
 }
