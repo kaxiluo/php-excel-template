@@ -23,9 +23,7 @@ class CellArraySetter implements CellSetterInterface
                 // 更新该行最大插入新行数
                 $context->iMaxInsertRows = $shouldInsertRows;
                 // 记录插入的列
-                for ($i = $insertRow[0]; $i < ($row + $shouldInsertRows); $i++) {
-                    $context->insertedRowIndexes[] = $i + 1;
-                }
+                $context->insertedRowIndexes += range($insertRow[0] + 1, $row + $shouldInsertRows);
                 // 动态更新skip row
                 $context->dynamicUpdateSkipRow($insertRow[0] + 1, $insertRow[1]);
             }
@@ -51,9 +49,7 @@ class CellArraySetter implements CellSetterInterface
             if ($insertCol) {
                 $worksheet->insertNewColumnBeforeByIndex($insertCol[0] + 1, $insertCol[1]);
                 // 记录插入的行
-                for ($i = $insertCol[0]; $i < ($col + $shouldInsertCols); $i++) {
-                    $context->insertedColIndexes[] = $i + 1;
-                }
+                $context->insertedColIndexes += range($insertCol[0] + 1, $col + $shouldInsertCols);
                 $context->perCellInsertedCol = $insertCol[1];
                 // 动态更新skip col
                 $context->dynamicUpdateSkipCol($insertCol[0] + 1, $insertCol[1]);

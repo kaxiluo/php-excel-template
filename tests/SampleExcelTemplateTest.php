@@ -128,16 +128,35 @@ class SampleExcelTemplateTest extends TestCase
         ]);
     }
 
-//    public function testSimpleMix()
-//    {
-//        $template = __DIR__ . '/template-excel/sample-mix.xlsx';
-//        $outputFile = $this->getOutputFile($template);
-//        $vars = [
-//            'z' => 'ss',
-//            'a' => new CellArrayVar(['a', 'b', 'c', '[a]'], RenderDirection::RIGHT, false),
-//        ];
-//
-//        PhpExcelTemplate::save($template, $outputFile, $vars);
-//        $this->assertExcelCellValue($outputFile, []);
-//    }
+    public function testSimpleMix()
+    {
+        $template = __DIR__ . '/template-excel/sample-mix.xlsx';
+        $outputFile = $this->getOutputFile($template);
+        $gradeTable = [
+            [1, 'Subject 1', 99],
+            [2, 'Subject 2', 96],
+            [3, 'Subject 3', 100],
+            [4, 'Subject 4', 85],
+            [5, 'Subject 5', 95],
+        ];
+        $vars = [
+            'username' => 'Tim',
+            'gradeTable' => new CellArray2DVar($gradeTable),
+            'totalScore' => '=SUM(C3:C' . (count($gradeTable) + 2) . ')',
+            'comment' => 'you are so good!',
+            'schools' => new CellArrayVar(['School A', 'School B',], RenderDirection::RIGHT, true),
+            'teachers' => new CellArrayVar(['Teacher X', 'Teacher Y', 'Teacher Z'], RenderDirection::RIGHT, true),
+        ];
+
+        PhpExcelTemplate::save($template, $outputFile, $vars);
+        $this->assertExcelCellValue($outputFile, [
+            'A5' => '3',
+            'C6' => '85',
+            'C8' => '475',
+            'A10' => 'you are so good!',
+            'G1' => 'School B',
+            'H10' => 'Teacher Z',
+            'J1' => 'end',
+        ]);
+    }
 }

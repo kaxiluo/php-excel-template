@@ -17,7 +17,7 @@ abstract class TestCase extends BaseTestCase
         $spreadsheet = IOFactory::load($excelFile);
         $worksheet = $spreadsheet->getActiveSheet();
         foreach ($coordinateToValue as $coordinate => $value) {
-            $actualValue = (string)$worksheet->getCell($coordinate)->getValue();
+            $actualValue = $worksheet->getCell($coordinate)->getFormattedValue();
             $this->assertEquals($value, $actualValue);
         }
     }
