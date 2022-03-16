@@ -2,6 +2,7 @@
 
 namespace Kaxiluo\PhpExcelTemplate\CellSetter;
 
+use Kaxiluo\PhpExcelTemplate\CellVars\CallbackContext;
 use Kaxiluo\PhpExcelTemplate\CellVars\CellVarInterface;
 use Kaxiluo\PhpExcelTemplate\ExcelRenderContext;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
@@ -17,5 +18,12 @@ class CellStringSetter implements CellSetterInterface
         list($col, $row) = $cellVar->getColumnAndRow();
 
         $worksheet->setCellValueByColumnAndRow($col, $row, $newString);
+
+        if ($cellVar->getCallback()) {
+            call_user_func(
+                $cellVar->getCallback(),
+                new CallbackContext($worksheet, $row, $col, $newString, 0, 0)
+            );
+        }
     }
 }

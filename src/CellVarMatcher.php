@@ -38,7 +38,6 @@ class CellVarMatcher
             if (is_string($cellVar)) {
                 $cellVars[$key] = new CellStringVar($cellVar);
             } elseif (is_array($cellVar)) {
-                $cellVar = array_values($cellVar);
                 if (count($cellVar) == count($cellVar, 1)) {
                     $cellVars[$key] = new CellArrayVar($cellVar);
                 } else {

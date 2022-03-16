@@ -2,6 +2,7 @@
 
 namespace Kaxiluo\PhpExcelTemplate\CellSetter;
 
+use Kaxiluo\PhpExcelTemplate\CellVars\CallbackContext;
 use Kaxiluo\PhpExcelTemplate\CellVars\CellVarInterface;
 use Kaxiluo\PhpExcelTemplate\CellVars\RenderDirection;
 use Kaxiluo\PhpExcelTemplate\ExcelRenderContext;
@@ -66,6 +67,19 @@ class CellArraySetter implements CellSetterInterface
 
         foreach ($array as $key => $value) {
             $worksheet->setCellValueByColumnAndRow($col, $row, $value);
+            if ($cellVar->getCallback()) {
+                $loopRowKey = $loopColKey = 0;
+                if ($cellVar->hasRenderDirection(RenderDirection::DOWN)) {
+                    $loopRowKey = $key;
+                }
+                if ($cellVar->hasRenderDirection(RenderDirection::RIGHT)) {
+                    $loopColKey = $key;
+                }
+                call_user_func(
+                    $cellVar->getCallback(),
+                    new CallbackContext($worksheet, $row, $col, $value, $loopRowKey, $loopColKey)
+                );
+            }
 
             if ($key !== 0 && !in_array($col, $context->insertedColIndexes)
                 && !in_array($row, $context->insertedRowIndexes)) {

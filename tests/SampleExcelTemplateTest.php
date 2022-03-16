@@ -2,11 +2,13 @@
 
 namespace Tests;
 
+use Kaxiluo\PhpExcelTemplate\CellVars\CallbackContext;
 use Kaxiluo\PhpExcelTemplate\CellVars\CellArray2DVar;
 use Kaxiluo\PhpExcelTemplate\CellVars\CellArrayVar;
 use Kaxiluo\PhpExcelTemplate\CellVars\CellStringVar;
 use Kaxiluo\PhpExcelTemplate\CellVars\RenderDirection;
 use Kaxiluo\PhpExcelTemplate\PhpExcelTemplate;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 
 class SampleExcelTemplateTest extends TestCase
 {
@@ -132,23 +134,53 @@ class SampleExcelTemplateTest extends TestCase
     {
         $template = __DIR__ . '/template-excel/sample-mix.xlsx';
         $outputFile = $this->getOutputFile($template);
-        $gradeTable = [
+        $gradeTable = new CellArray2DVar([
             [1, 'Subject 1', 99],
             [2, 'Subject 2', 96],
             [3, 'Subject 3', 100],
             [4, 'Subject 4', 85],
             [5, 'Subject 5', 95],
-        ];
+        ]);
+        $gradeTable->setCallback(function (CallbackContext $context) {
+            if ($context->getLoopColKey() === 2 && $context->getValue() < 90) {
+                $context->getStyle()->getFont()->getColor()->setARGB('FFFF0000');
+            }
+        });
         $vars = [
             'username' => 'Tim',
-            'gradeTable' => new CellArray2DVar($gradeTable),
-            'totalScore' => '=SUM(C3:C' . (count($gradeTable) + 2) . ')',
+            'gradeTable' => $gradeTable,
+            'totalScore' => '=SUM(C3:C' . (count($gradeTable->getData()) + 2) . ')',
             'comment' => 'you are so good!',
-            'schools' => new CellArrayVar(['School A', 'School B',], RenderDirection::RIGHT, true),
-            'teachers' => new CellArrayVar(['Teacher X', 'Teacher Y', 'Teacher Z'], RenderDirection::RIGHT, true),
+            'schools' => new CellArrayVar(
+                ['School A', 'School B',],
+                RenderDirection::RIGHT,
+                true,
+                function (CallbackContext $context) {
+                    if ($context->getValue() == 'School B') {
+                        $context->getStyle()->getFill()
+                            ->setFillType(Fill::FILL_SOLID)
+                            ->getStartColor()->setARGB('FFFF0000');
+                    }
+                }
+            ),
+            'teachers' => new CellArrayVar(
+                ['Teacher X', 'Teacher Y', 'Teacher Z'],
+                RenderDirection::RIGHT,
+                true,
+                function (CallbackContext $context) {
+                    if ($context->getLoopColKey() === 1) {
+                        $context->getStyle()->getFont()->setBold(true);
+                    }
+                }
+            ),
+            'A10' => ['x', 'y', 'z'],
+            'x' => new CellStringVar('i was red color', function (CallbackContext $context) {
+                $context->getStyle()->getFont()->getColor()->setARGB('FFFF0000');
+            })
         ];
 
         PhpExcelTemplate::save($template, $outputFile, $vars);
+
         $this->assertExcelCellValue($outputFile, [
             'A5' => '3',
             'C6' => '85',
@@ -157,6 +189,13 @@ class SampleExcelTemplateTest extends TestCase
             'G1' => 'School B',
             'H10' => 'Teacher Z',
             'J1' => 'end',
+        ]);
+
+        $this->assertExcelCellStyle($outputFile, [
+            'G1' => ['fill' => ['startColor' => ['argb' => 'FFFF0000']]],
+            'G10' => ['font' => ['bold' => true]],
+            'C14' => ['font' => ['color' => ['argb' => 'FFFF0000']]],
+            'C6' => ['font' => ['color' => ['argb' => 'FFFF0000']]],
         ]);
     }
 }

@@ -21,4 +21,15 @@ abstract class TestCase extends BaseTestCase
             $this->assertEquals($value, $actualValue);
         }
     }
+
+    protected function assertExcelCellStyle($excelFile, array $coordinateToValue)
+    {
+        $spreadsheet = IOFactory::load($excelFile);
+        $worksheet = $spreadsheet->getActiveSheet();
+        foreach ($coordinateToValue as $coordinate => $value) {
+            $actual = $worksheet->getStyle($coordinate)->exportArray();
+
+            $this->assertArraySubset($value, $actual);
+        }
+    }
 }
