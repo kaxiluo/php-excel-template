@@ -8,7 +8,17 @@
 
 代码如下:
 ```
-todo
+use Kaxiluo\PhpExcelTemplate\CellVars\CellStringVar;
+use Kaxiluo\PhpExcelTemplate\CellVars\CellArrayVar;
+use Kaxiluo\PhpExcelTemplate\CellVars\CellArray2DVar;
+use Kaxiluo\PhpExcelTemplate\CellVars\CallbackContext;
+use Kaxiluo\PhpExcelTemplate\PhpExcelTemplate;
+
+$vars = [
+    // todo
+];
+
+PhpExcelTemplate::save('/path/to/templateFile.xlsx', '/path/to/outputFile.xlsx', $vars);
 ```
 
 ## 安装
@@ -30,6 +40,7 @@ composer require kaxiluo/php-excel-template
 ```
 use Kaxiluo\PhpExcelTemplate\CellVars\CellStringVar;
 use Kaxiluo\PhpExcelTemplate\CellVars\CallbackContext;
+use Kaxiluo\PhpExcelTemplate\PhpExcelTemplate;
 
 $vars = [
     // 默认
@@ -40,6 +51,8 @@ $vars = [
         $context->getStyle()->getFont()->getColor()->setARGB('FFFF0000');
     }),
 ];
+
+PhpExcelTemplate::save('/path/to/templateFile.xlsx', '/path/to/outputFile.xlsx', $vars);
 ```
 
 #### 一维数组变量（CellArrayVar）
@@ -48,6 +61,7 @@ $vars = [
 use Kaxiluo\PhpExcelTemplate\CellVars\CellArrayVar;
 use Kaxiluo\PhpExcelTemplate\CellVars\CallbackContext;
 use Kaxiluo\PhpExcelTemplate\CellVars\RenderDirection;
+use Kaxiluo\PhpExcelTemplate\PhpExcelTemplate;
 
 $vars = [
     // 默认向下渲染，插入新的行
@@ -75,6 +89,8 @@ $vars = [
         }
     ),
 ];
+
+PhpExcelTemplate::save('/path/to/templateFile.xlsx', '/path/to/outputFile.xlsx', $vars);
 ```
 
 #### 二维数组变量（CellArray2DVar）
@@ -82,6 +98,7 @@ $vars = [
 ```
 use Kaxiluo\PhpExcelTemplate\CellVars\CellArray2DVar;
 use Kaxiluo\PhpExcelTemplate\CellVars\CallbackContext;
+use Kaxiluo\PhpExcelTemplate\PhpExcelTemplate;
 
 $vars = [
     // 默认向右-下方渲染，下方插入新的行，右边不插入新的列
@@ -107,7 +124,9 @@ $vars = [
         }
     ),
 ];
+
+PhpExcelTemplate::save('/path/to/templateFile.xlsx', '/path/to/outputFile.xlsx', $vars);
 ```
 
 ## 其他
-目前已处理了同一个行上的变量插入新的行，不会额外插入过多的行,列同理。用户需要注意多个变量若设置为插入新行/列，相互影响的情况
+目前已处理了同一个行上的变量同时设置插入新的行，不会插入额外的行，列同理。用户需要考虑多个变量均为插入新行或列，其产生的相互影响。
