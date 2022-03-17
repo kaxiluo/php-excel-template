@@ -31,6 +31,7 @@ class PhpExcelTemplate
         $varMatcher = new CellVarMatcher($vars);
 
         $context = new ExcelRenderContext();
+        $context->cellVars = $varMatcher->getCellVars();
 
         $row = 1;
         while ($row <= $maxRow) {

@@ -19,4 +19,9 @@ class CellStringVar extends CellVar
     {
         return CellStringSetter::class;
     }
+
+    public function __toString() : string
+    {
+        return $this->getData();
+    }
 }

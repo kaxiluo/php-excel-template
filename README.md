@@ -4,21 +4,45 @@
 
 ## 演示
 
-![Example](https://avatars.githubusercontent.com/u/32103283?v=4)
+![Example](example/example-kpi.png)
 
 代码如下:
 ```
-use Kaxiluo\PhpExcelTemplate\CellVars\CellStringVar;
-use Kaxiluo\PhpExcelTemplate\CellVars\CellArrayVar;
-use Kaxiluo\PhpExcelTemplate\CellVars\CellArray2DVar;
 use Kaxiluo\PhpExcelTemplate\CellVars\CallbackContext;
+use Kaxiluo\PhpExcelTemplate\CellVars\CellArray2DVar;
+use Kaxiluo\PhpExcelTemplate\CellVars\CellArrayVar;
+use Kaxiluo\PhpExcelTemplate\CellVars\RenderDirection;
 use Kaxiluo\PhpExcelTemplate\PhpExcelTemplate;
 
+$data = [
+    ['个人任务执行情况', '完成X系统开发', '40', '35', '任务延期一次'],
+    ['技术贡献', '主持基础设施项目建设', '30', '30', ''],
+    ['素质与能力', '认真负责，积极工作', '20', '20', ''],
+    ['防疫工作', '严格执行防疫措施，按要求填写防疫信息统计表', '10', '10', ''],
+];
+$items = new CellArray2DVar(
+    $data,
+    true,
+    false,
+    function (CallbackContext $context) use ($data) {
+        if ($context->getLoopColKey() === 3) {
+            if ($context->getValue() < $data[$context->getLoopRowKey()][2]) {
+                $context->getStyle()->getFont()->getColor()->setARGB('FFFF0000');
+            }
+        }
+    }
+);
 $vars = [
-    // todo
+    'username' => 'lyy',
+    'department' => 'IT中心',
+    'dateRange' => '2022-03-01 - 2022-03-31',
+    'leader' => 'Tim',
+    'items' => $items,
+    'totalScore' => '=SUM(D5:D' . (4 + count($data)) . ')',
+    'x' => new CellArrayVar(['Peace', 'and', 'Love'], RenderDirection::DOWN, false),
 ];
 
-PhpExcelTemplate::save('/path/to/templateFile.xlsx', '/path/to/outputFile.xlsx', $vars);
+PhpExcelTemplate::save('./example-kpi.xlsx', './example-kpi-output.xlsx', $vars);
 ```
 
 ## 安装
@@ -33,10 +57,16 @@ composer require kaxiluo/php-excel-template
 - 字符串变量渲染
 - 一维数组变量渲染，自定义渲染方向（向下的行或向右的列）、是否插入新的行或列
 - 二维数组变量渲染，自定义向下是否插入新的行、向右是否插入新的列
-- 设置回调函数，自定义渲染样式
+- 设置回调函数，定制渲染样式或其他特殊行为
+
+### 模板变量说明
+
+在模板中声明变量名只允许特定字符(字母数字-_.)，任何变量的值不会被二次渲染。
 
 #### 字符串变量（CellStringVar）
+1）在模板中使用`{yourStringVarName}`声明字符串变量
 
+2）如何定义变量值如下：
 ```
 use Kaxiluo\PhpExcelTemplate\CellVars\CellStringVar;
 use Kaxiluo\PhpExcelTemplate\CellVars\CallbackContext;
@@ -56,7 +86,9 @@ PhpExcelTemplate::save('/path/to/templateFile.xlsx', '/path/to/outputFile.xlsx',
 ```
 
 #### 一维数组变量（CellArrayVar）
+1）在模板中使用`[yourArrayVarName]`声明一维数组变量
 
+2）如何定义变量值如下：
 ```
 use Kaxiluo\PhpExcelTemplate\CellVars\CellArrayVar;
 use Kaxiluo\PhpExcelTemplate\CellVars\CallbackContext;
@@ -94,7 +126,9 @@ PhpExcelTemplate::save('/path/to/templateFile.xlsx', '/path/to/outputFile.xlsx',
 ```
 
 #### 二维数组变量（CellArray2DVar）
+1）在模板中使用`[[yourArray2DVarName]]`声明二位数组变量
 
+2）如何定义变量值如下：
 ```
 use Kaxiluo\PhpExcelTemplate\CellVars\CellArray2DVar;
 use Kaxiluo\PhpExcelTemplate\CellVars\CallbackContext;

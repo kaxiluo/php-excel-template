@@ -17,23 +17,24 @@ class SampleExcelTemplateTest extends TestCase
         $template = __DIR__ . '/template-excel/sample-string.xlsx';
         $outputFile = $this->getOutputFile($template);
         $vars = [
-            'A1' => 'aa',
-            'B1' => new CellStringVar('bb'),
-            'C1' => new CellArrayVar(['cc']),
+            'A1' => 'a1',
+            'B1' => new CellStringVar('b1'),
+            'unmatchedType' => new CellArrayVar(['c1']),
             'A2' => new CellStringVar('a2'),
-            'C2' => new CellStringVar('c2'),
+            'x' => 'lyy',
+            'y' => 'lzy',
         ];
 
         PhpExcelTemplate::save($template, $outputFile, $vars);
 
         $this->assertExcelCellValue($outputFile, [
-            'A1' => 'aa',
-            'B1' => 'bb',
-            'C1' => '{C1}',//类型错误，不渲染
-            'D1' => '{D1}',//未定义该变量，不渲染
-            'A2' => 'hi a2',//包含
-            'B2' => 'aa',//重复使用
-            'C2' => 'hello c2 -',//包含
+            'A1' => 'a1',
+            'B1' => 'b1',
+            'C1' => '{unmatchedType}',//类型不匹配
+            'D1' => '{undefined}',//未定义该变量
+            'A2' => 'i am a2!',
+            'B2' => 'a1',
+            'B6' => 'lyy love lzy',
         ]);
     }
 
