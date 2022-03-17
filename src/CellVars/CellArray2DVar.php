@@ -11,13 +11,18 @@ class CellArray2DVar extends CellVar
     private $downIsInsertNew;
     private $rightIsInsertNew;
 
-    public function __construct(array $data, bool $downIsInsertNew = true, bool $rightIsInsertNew = false)
-    {
+    public function __construct(
+        array     $data,
+        bool      $downIsInsertNew = true,
+        bool      $rightIsInsertNew = false,
+        ?callable $callback = null
+    ) {
         $this->setData($data);
         $this->setRenderDirections([RenderDirection::DOWN, RenderDirection::RIGHT]);
         $this->setIsInsertNew($downIsInsertNew || $rightIsInsertNew);
         $this->downIsInsertNew = $downIsInsertNew;
         $this->rightIsInsertNew = $rightIsInsertNew;
+        $this->setCallback($callback);
 
         $this->setShouldInsertRowsAndCols();
     }
