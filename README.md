@@ -33,6 +33,7 @@ $items = new CellArray2DVar(
     }
 );
 
+// 模板变量定义
 $vars = [
     'username' => 'lyy',
     'department' => 'IT中心',
@@ -43,7 +44,10 @@ $vars = [
     'x' => new CellArrayVar(['Peace', 'and', 'Love'], RenderDirection::DOWN, false),
 ];
 
+// 保存文件
 PhpExcelTemplate::save('./example-kpi.xlsx', './example-kpi-output.xlsx', $vars);
+// 或者浏览器下载
+// PhpExcelTemplate::download('./example-kpi.xlsx', 'example-kpi-output.xlsx', $vars);
 ```
 
 ## 安装
@@ -63,7 +67,7 @@ composer require kaxiluo/php-excel-template
 ### 模板变量说明
 
 模板中的变量名只允许特定字符（字母数字-_.）；
-如果变量的值不小心包含了声明变量的符号，该程序不会重复渲染，将保持原样输出。
+若变量的值包含了声明变量的字符串，本程序不会重复渲染，将正常的输出。
 
 #### 字符串变量（CellStringVar）
 1）在模板中使用`{yourStringVarName}`声明字符串变量
