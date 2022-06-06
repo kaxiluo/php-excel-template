@@ -4,26 +4,46 @@ namespace Kaxiluo\PhpExcelTemplate;
 
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class PhpExcelTemplate
 {
-    public static function save($templateFile, $outputFile, array $vars)
+    public static function save(string $templateFile, string $outputFile, array $vars)
+    {
+        $spreadsheet = static::renderSpreadsheet($templateFile, $vars);
+
+        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $writer->save($outputFile);
+    }
+
+    public static function download(string $templateFile, string $outputName, array $vars)
+    {
+        $spreadsheet = static::renderSpreadsheet($templateFile, $vars);
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $outputName . '"');
+        header('Cache-Control: max-age=0');
+
+        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $writer->save('php://output');
+    }
+
+    public static function renderSpreadsheet(string $templateFile, array $vars): Spreadsheet
     {
         $spreadsheet = IOFactory::load($templateFile);
         $worksheet = $spreadsheet->getActiveSheet();
 
-        if ($vars) {
-            static::render($worksheet, $vars);
-        }
+        static::render($worksheet, $vars);
 
-        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
-        $writer->save($outputFile);
-        return $outputFile;
+        return $spreadsheet;
     }
 
     protected static function render(Worksheet $worksheet, array $vars)
     {
+        if (!$vars) {
+            return;
+        }
         $maxRow = $worksheet->getHighestRow();
         $highestCol = $worksheet->getHighestColumn();
         $maxCol = Coordinate::columnIndexFromString($highestCol);

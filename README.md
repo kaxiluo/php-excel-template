@@ -6,8 +6,8 @@
 
 ![Example](example/example-kpi.png)
 
-代码如下:
-```
+演示代码如下:
+```php
 use Kaxiluo\PhpExcelTemplate\CellVars\CallbackContext;
 use Kaxiluo\PhpExcelTemplate\CellVars\CellArray2DVar;
 use Kaxiluo\PhpExcelTemplate\CellVars\CellArrayVar;
@@ -32,6 +32,7 @@ $items = new CellArray2DVar(
         }
     }
 );
+
 $vars = [
     'username' => 'lyy',
     'department' => 'IT中心',
@@ -61,13 +62,14 @@ composer require kaxiluo/php-excel-template
 
 ### 模板变量说明
 
-在模板中声明变量名只允许特定字符(字母数字-_.)，任何变量的值不会被二次渲染。
+模板中的变量名只允许特定字符（字母数字-_.）；
+如果变量的值不小心包含了声明变量的符号，该程序不会重复渲染，将保持原样输出。
 
 #### 字符串变量（CellStringVar）
 1）在模板中使用`{yourStringVarName}`声明字符串变量
 
-2）如何定义变量值如下：
-```
+2）用法如下：
+```php
 use Kaxiluo\PhpExcelTemplate\CellVars\CellStringVar;
 use Kaxiluo\PhpExcelTemplate\CellVars\CallbackContext;
 use Kaxiluo\PhpExcelTemplate\PhpExcelTemplate;
@@ -77,7 +79,7 @@ $vars = [
     'var1' => 'value1', 
     'var2' => new CellStringVar('value2'),
     // 设置回调
-    'var1' => new CellStringVar('i was red color', function (CallbackContext $context) {
+    'var3' => new CellStringVar('i was red color', function (CallbackContext $context) {
         $context->getStyle()->getFont()->getColor()->setARGB('FFFF0000');
     }),
 ];
@@ -88,8 +90,8 @@ PhpExcelTemplate::save('/path/to/templateFile.xlsx', '/path/to/outputFile.xlsx',
 #### 一维数组变量（CellArrayVar）
 1）在模板中使用`[yourArrayVarName]`声明一维数组变量
 
-2）如何定义变量值如下：
-```
+2）用法如下：
+```php
 use Kaxiluo\PhpExcelTemplate\CellVars\CellArrayVar;
 use Kaxiluo\PhpExcelTemplate\CellVars\CallbackContext;
 use Kaxiluo\PhpExcelTemplate\CellVars\RenderDirection;
@@ -101,20 +103,20 @@ $vars = [
     'var2' => new CellArrayVar(['x', 'x']),
     'var3' => new CellArrayVar(['x', 'x'], RenderDirection::DOWN, true),
     // 向右渲染，插入新的列
-    'var3' => new CellArrayVar(['x', 'x'], RenderDirection::RIGHT),
+    'var4' => new CellArrayVar(['x', 'x'], RenderDirection::RIGHT),
     // 向右渲染，不插入新的列
-    'var4' => new CellArrayVar(['x', 'x'], RenderDirection::RIGHT, false),
+    'var5' => new CellArrayVar(['x', 'x'], RenderDirection::RIGHT, false),
     // 向下渲染，不插入新的行
-    'var5' => new CellArrayVar(['x', 'x'], RenderDirection::DOWN, false),
+    'var6' => new CellArrayVar(['x', 'x'], RenderDirection::DOWN, false),
     // 设置回调
-    'var6' => new CellArrayVar(
-        ['x6-1', 'x6-2', 'x6-3'],
+    'var7' => new CellArrayVar(
+        ['x7-1', 'x7-2', 'x7-3'],
         RenderDirection::RIGHT,
         true,
         function (CallbackContext $context) {
             // $context->getWorksheet()
             // $context->getValue()
-            // 设置第二条数据(x6-2)加粗
+            // 设置第二条数据(x7-2)加粗
             if ($context->getLoopColKey() === 1) {
                 $context->getStyle()->getFont()->setBold(true);
             }
@@ -128,8 +130,8 @@ PhpExcelTemplate::save('/path/to/templateFile.xlsx', '/path/to/outputFile.xlsx',
 #### 二维数组变量（CellArray2DVar）
 1）在模板中使用`[[yourArray2DVarName]]`声明二位数组变量
 
-2）如何定义变量值如下：
-```
+2）用法如下：
+```php
 use Kaxiluo\PhpExcelTemplate\CellVars\CellArray2DVar;
 use Kaxiluo\PhpExcelTemplate\CellVars\CallbackContext;
 use Kaxiluo\PhpExcelTemplate\PhpExcelTemplate;
@@ -163,4 +165,4 @@ PhpExcelTemplate::save('/path/to/templateFile.xlsx', '/path/to/outputFile.xlsx',
 ```
 
 ## 其他
-目前已处理了同一个行上的变量同时设置插入新的行，不会插入额外的行，列同理。用户需要考虑多个变量均为插入新行或列，其产生的相互影响。
+如果Excel模板中同一个行上的多个变量，均定义为要插入新的行，本程序会自动处理需要插入的最大行数，不会插入额外的行；列同理。用户需要考虑多个变量均为插入新行或列，其产生的相互影响。
