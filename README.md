@@ -4,7 +4,7 @@
 
 ## 演示
 
-![Example](example/example-kpi.png)
+![Example](https://kxler.oss-cn-shanghai.aliyuncs.com/github/php-excel-template-example.png)
 
 演示代码如下:
 ```php
