@@ -4,3 +4,4 @@ vendor
 composer.lock
 .phpunit*
 .php-cs-fixer.cache
+tests/template-excel/*-output.xlsx
